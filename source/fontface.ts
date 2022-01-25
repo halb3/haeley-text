@@ -5,7 +5,7 @@ import { assert, fetchAsync } from 'haeley-auxiliaries';
 
 import { GLfloat2, GLfloat4, GLsizei2 } from 'haeley-math';
 
-import { Context, Texture2D, Wizard } from 'haeley-webgl';
+import { Context, Texture2D, Wizard, Precision } from 'haeley-webgl';
 
 import { FontFaceLoader } from './fontfaceloader';
 import { Glyph } from './glyph';
@@ -83,10 +83,12 @@ export class FontFace {
     static fromFile(url: string, context: Context, headless: boolean = false, identifier?: string):
         Promise<FontFace> {
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const transform = (data: any): PromiseLike<FontFace> => {
             const font = new FontFace(context, identifier);
             return FontFaceLoader.process(font, data, url, undefined, headless)
                 .then((fontFace: FontFace) => fontFace)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .catch((reason: any) => Promise.reject(`processing font face data failed: ${reason}`));
         };
 
@@ -97,10 +99,12 @@ export class FontFace {
     static fromFiles(fontFileUrl: string, pageFileUrlsByPageID: Map<number, string>,
         context: Context, headless: boolean = false, identifier?: string): Promise<FontFace> {
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const transform = (data: any): PromiseLike<FontFace> => {
             const font = new FontFace(context, identifier);
             return FontFaceLoader.process(font, data, fontFileUrl, pageFileUrlsByPageID, headless)
                 .then((fontFace: FontFace) => fontFace)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 .catch((reason: any) => Promise.reject(`processing font face data failed: ${reason}`));
         };
 
@@ -120,7 +124,7 @@ export class FontFace {
 
         identifier = identifier !== undefined && identifier !== `` ? identifier : this.constructor.name;
         this._glyphTexture = new Texture2D(context, `${identifier}GlyphAtlas`);
-        const internalFormat = Wizard.queryInternalTextureFormat(context, gl.RGBA, Wizard.Precision.byte);
+        const internalFormat = Wizard.queryInternalTextureFormat(context, gl.RGBA, Precision.byte);
         this._glyphTexture.initialize(1, 1, internalFormat[0], gl.RGBA, internalFormat[1]);
         this._glyphTexture.filter(gl.LINEAR, gl.LINEAR);
     }

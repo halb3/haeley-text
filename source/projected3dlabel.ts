@@ -7,7 +7,7 @@ import { log, logIf, LogLevel } from 'haeley-auxiliaries';
 
 import { FontFace } from './fontface';
 import { GlyphVertices } from './glyphvertices';
-import { Label } from './label';
+import { Label, Type, Unit } from './label';
 import { Text } from './text';
 import { Typesetter } from './typesetter';
 
@@ -31,20 +31,20 @@ export class Projected3DLabel extends Label {
 
 
     /**
-     * Constructs a pre-configured projected 3D-label with given text. Depending on the label type, transformations are
+     * Constructs a pre-configured projected 3D-label with given text. Depending on the Type, transformations are
      * applied once when typesetting (static) or every frame during rendering (dynamic).
      * @param text - The text that is displayed by this label.
      * @param type - Either static or dynamic. If static is used, all transformations are baked and modifications to
      * on any of the label's transformations are expected to occur less often.
      * @param fontFace - The font face that should be used for that label, or undefined if set later.
      */
-    constructor(text: Text, type: Label.Type, fontFace?: FontFace) {
+    constructor(text: Text, type: Type, fontFace?: FontFace) {
         super(text, type, fontFace);
         this._position = vec3.fromValues(0.0, 0.0, 0.0);
         this._direction = vec2.fromValues(1.0, 0.0);
 
         this._fontSize = Projected3DLabel.DEFAULT_FONTSIZE_PX;
-        this._fontSizeUnit = Label.Unit.Mixed;
+        this._fontSizeUnit = Unit.Mixed;
     }
 
     /**
@@ -120,11 +120,11 @@ export class Projected3DLabel extends Label {
         }
 
         switch (this._type) {
-            case Label.Type.Static:
+            case Type.Static:
                 this.staticTransform = mat4.clone(transform);
                 this.dynamicTransform = m4();
                 break;
-            case Label.Type.Dynamic:
+            case Type.Dynamic:
                 this.staticTransform = m4();
                 this.dynamicTransform = mat4.clone(transform);
                 break;
@@ -184,13 +184,13 @@ export class Projected3DLabel extends Label {
      * This unit is used for the font size. This method overrides the super.fontSizeUnit, since `Projected3DLabel` only
      * supports Pixel, for now.
      * (@see {@link fontSize})
-     * @param newUnit - Unit to be used, though, this label type only supports pixel units (px).
+     * @param newUnit - Unit to be used, though, this Type only supports pixel units (px).
      */
-    set fontSizeUnit(unit: Label.Unit) {
-        logIf(unit !== Label.Unit.Mixed, LogLevel.Warning,
+    set fontSizeUnit(unit: Unit) {
+        logIf(unit !== Unit.Mixed, LogLevel.Warning,
             `font size unit other than 'px' are not supported in projected-3d-label, given ${unit}`);
     }
-    get fontSizeUnit(): Label.Unit {
+    get fontSizeUnit(): Unit {
         return this._fontSizeUnit;
     }
 }

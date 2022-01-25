@@ -7,7 +7,7 @@ import { logIf, LogLevel } from 'haeley-auxiliaries';
 
 import { FontFace } from './fontface';
 import { GlyphVertices } from './glyphvertices';
-import { Label } from './label';
+import { Label, Type, Unit } from './label';
 import { Text } from './text';
 
 import { Typesetter } from './typesetter';
@@ -35,7 +35,7 @@ export class Position2DLabel extends Label {
      * @param text - The text that is displayed by this label.
      * @param fontFace - The font face that should be used for that label, or undefined if set later.
      */
-    constructor(text: Text, type: Label.Type, fontFace?: FontFace) {
+    constructor(text: Text, type: Type, fontFace?: FontFace) {
         super(text, type, fontFace);
         this._position = vec2.fromValues(0.0, 0.0);
         this._direction = vec2.fromValues(1.0, 0.0);
@@ -43,7 +43,7 @@ export class Position2DLabel extends Label {
         this._frameSize = vec2.create();
 
         this._fontSize = Position2DLabel.DEFAULT_FONTSIZE_PX;
-        this._fontSizeUnit = Label.Unit.Pixel;
+        this._fontSizeUnit = Unit.Pixel;
     }
 
     /**
@@ -105,11 +105,11 @@ export class Position2DLabel extends Label {
         mat4.rotateZ(transform, transform, angle);
 
         switch (this._type) {
-            case Label.Type.Static:
+            case Type.Static:
                 this.staticTransform = mat4.clone(transform);
                 this.dynamicTransform = m4();
                 break;
-            case Label.Type.Dynamic:
+            case Type.Dynamic:
                 this.staticTransform = m4();
                 this.dynamicTransform = mat4.clone(transform);
                 break;
@@ -172,13 +172,13 @@ export class Position2DLabel extends Label {
      * This unit is used for the font size. This method overrides the super.fontSizeUnit, since `Position2DLabel` only
      * supports Pixel, for now.
      * (@see {@link fontSize})
-     * @param newUnit - Unit to be used, though, this label type only supports pixel units (px).
+     * @param newUnit - Unit to be used, though, this Type only supports pixel units (px).
      */
-    set fontSizeUnit(unit: Label.Unit) {
-        logIf(unit !== Label.Unit.Pixel, LogLevel.Warning,
+    set fontSizeUnit(unit: Unit) {
+        logIf(unit !== Unit.Pixel, LogLevel.Warning,
             `font size unit other than 'px' are not supported in position-2d-label, given ${unit}`);
     }
-    get fontSizeUnit(): Label.Unit {
+    get fontSizeUnit(): Unit {
         return this._fontSizeUnit;
     }
 

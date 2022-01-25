@@ -20,7 +20,7 @@ import {
 import { GlyphVertices } from './glyphvertices';
 
 import { FontFace } from './fontface';
-import { Label } from './label';
+import { Label, Type, Unit } from './label';
 import { LabelGeometry } from './labelgeometry';
 import { Position2DLabel } from './position2dlabel';
 import { Position3DLabel } from './position3dlabel';
@@ -80,7 +80,7 @@ export class LabelRenderPass extends Initializable {
     protected _aaStepScale: GLfloat;
 
     /** @see {@link aaSampling} */
-    protected _aaSampling: LabelRenderPass.Sampling = LabelRenderPass.Sampling.Smooth1;
+    protected _aaSampling: Sampling = Sampling.Smooth1;
 
 
     protected _program: Program;
@@ -184,7 +184,7 @@ export class LabelRenderPass extends Initializable {
             /* If the next/subsequent label has no depictable glyphs or has the same font and color, then increase
             draw range. */
             const label1 = i < this._labels.length - 1 ? this._labels[i + 1] : undefined;
-            const bothStatic = label1 && label0.type === Label.Type.Static && label1.type === Label.Type.Static;
+            const bothStatic = label1 && label0.type === Type.Static && label1.type === Type.Static;
             const sameColor = label1 && label0.color.equals(label1.color);
             const sameFontFace = label1 && label0.fontFace === label1.fontFace;
             const sameUnit = label1 && label0.fontSizeUnit === label1.fontSizeUnit;
@@ -194,7 +194,7 @@ export class LabelRenderPass extends Initializable {
                 continue;
             }
 
-            const dynamic = label0.type === Label.Type.Dynamic;
+            const dynamic = label0.type === Type.Dynamic;
             gl.uniform1i(this._uDynamic, dynamic);
             if (dynamic) {
                 gl.uniformMatrix4fv(this._uTransform, false, label0.dynamicTransform);
@@ -205,17 +205,18 @@ export class LabelRenderPass extends Initializable {
                 currentColor = label0.color;
             }
             if (currentFontFace !== label0.fontFace) {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 label0.fontFace!.glyphTexture.bind(gl.TEXTURE0);
                 currentFontFace = label0.fontFace;
             }
 
             switch (label0.fontSizeUnit) {
-                case Label.Unit.Pixel:
+                case Unit.Pixel:
                     gl.uniformMatrix4fv(this._uViewProjection, false, identity);
                     break;
 
-                case Label.Unit.World:
-                case Label.Unit.Mixed:
+                case Unit.World:
+                case Unit.Mixed:
                 default:
                     gl.uniformMatrix4fv(this._uViewProjection, false, this._camera.viewProjection);
             }
@@ -494,16 +495,16 @@ export class LabelRenderPass extends Initializable {
     /**
      * Specify the sampling pattern/mode (anti-aliasing / no anti-aliasing) for glyph rendering. The sampling should be
      * increased when rendering small text, e.g., starting at font size of 16px or less. With larger text, there is no
-     * perceptual benefit with more than one derivative sample, i.e., LabelRenderPass.Sampling.Smooth1.
+     * perceptual benefit with more than one derivative sample, i.e., Sampling.Smooth1.
      */
-    set aaSampling(sampling: LabelRenderPass.Sampling) {
+    set aaSampling(sampling: Sampling) {
         if (this._aaSampling === sampling) {
             return;
         }
         this._aaSampling = sampling;
         this._altered.alter('aaSampling');
     }
-    get aaSampling(): LabelRenderPass.Sampling {
+    get aaSampling(): Sampling {
         return this._aaSampling;
     }
 
@@ -524,16 +525,11 @@ export class LabelRenderPass extends Initializable {
 
 }
 
-
-export namespace LabelRenderPass {
-
-    export enum Sampling {
-        None = 0,        //  1 sample,  no derivatives
-        Smooth1 = 1,     //  1 sample,  requires derivatives
-        Horizontal3 = 2, //  3 samples, requires derivatives
-        Vertical3 = 3,   //  3 samples, requires derivatives
-        Grid3x3 = 4,     //  9 samples, requires derivatives
-        Grid4x4 = 5,     // 16 samples, requires derivatives
-    }
-
+export enum Sampling {
+    None = 0,        //  1 sample,  no derivatives
+    Smooth1 = 1,     //  1 sample,  requires derivatives
+    Horizontal3 = 2, //  3 samples, requires derivatives
+    Vertical3 = 3,   //  3 samples, requires derivatives
+    Grid3x3 = 4,     //  9 samples, requires derivatives
+    Grid4x4 = 5,     // 16 samples, requires derivatives
 }

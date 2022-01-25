@@ -41,6 +41,7 @@ export class GlyphVertices {
 
         for (let index = 0; index < array.length; ++index) {
             const vertices = array[index];
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             if (vertices === undefined || vertices!.length === 0) {
                 continue;
             }

@@ -33,8 +33,10 @@ export class FontFaceLoader {
             return false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         fontFace.size = parseFloat(pairs.get('size')!);
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const values = pairs.get('padding')!.split(',');
         if (values.length !== 4) {
             log(LogLevel.Warning, `expected 4 values for padding, given ${values} (${values.length})`);
@@ -67,18 +69,24 @@ export class FontFaceLoader {
             return false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         fontFace.base = parseFloat(pairs.get('base')!);
         if (pairs.has('ascent')) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             fontFace.ascent = parseFloat(pairs.get('ascent')!);
         }
         if (pairs.has('descent')) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             fontFace.descent = parseFloat(pairs.get('descent')!);
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         fontFace.lineHeight = parseFloat(pairs.get('lineHeight')!);
 
         fontFace.glyphTextureExtent = [
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parseFloat(pairs.get('scaleW')!),
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parseFloat(pairs.get('scaleH')!),
         ];
 
@@ -100,6 +108,7 @@ export class FontFaceLoader {
         }
 
         const path = dirname(url);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         let page = pairs.get('file')!;
         page = page.replace(/['"]+/g, ''); /* remove quotes */
 
@@ -149,6 +158,7 @@ export class FontFaceLoader {
             return false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const index: number = parseInt(pairs.get('id')!, 10);
         logIf(index <= 0.0, LogLevel.Warning,
             `expected glyph index to be greater than 0, given ${index}`);
@@ -161,12 +171,16 @@ export class FontFaceLoader {
             1.0 / fontFace.glyphTextureExtent[1],
         ];
         const extent: GLfloat2 = [
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parseFloat(pairs.get('width')!),
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parseFloat(pairs.get('height')!),
         ];
 
         glyph.subTextureOrigin = [
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parseFloat(pairs.get('x')!) * extentScale[0],
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             1.0 - (parseFloat(pairs.get('y')!) + extent[1]) * extentScale[1],
         ];
 
@@ -176,10 +190,13 @@ export class FontFaceLoader {
         glyph.subTextureExtent[1] = extent[1] * extentScale[1];
 
         glyph.bearingFromFontBaseAndOffset(fontFace.base,
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parseFloat(pairs.get('xoffset')!),
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             parseFloat(pairs.get('yoffset')!),
         );
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         glyph.advance = parseFloat(pairs.get('xadvance')!);
 
         fontFace.addGlyph(glyph);
@@ -198,18 +215,21 @@ export class FontFaceLoader {
             return false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const first: number = parseInt(pairs.get('first')!, 10);
         if (first <= 0.0) {
             log(LogLevel.Warning, `expected kerning's first to be greater than 0, given ${first}`);
             return false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const second: number = parseInt(pairs.get('second')!, 10);
         if (second <= 0.0) {
             log(LogLevel.Warning, `expected kerning's second to be greater than 0, given ${second}`);
             return false;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const kerning: number = parseFloat(pairs.get('amount')!);
         fontFace.setKerning(first, second, kerning);
 
@@ -315,7 +335,7 @@ export class FontFaceLoader {
                     status = this.processCommon(attributes, fontFace);
                     break;
 
-                case 'page':
+                case 'page': {
                     if (headless || pageFileUrlsByPageID) {
                         break;
                     }
@@ -324,6 +344,7 @@ export class FontFaceLoader {
                         promises.push(promise);
                     }
                     break;
+                }
 
                 case 'char':
                     status = this.processChar(attributes, fontFace);

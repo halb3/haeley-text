@@ -140,21 +140,21 @@ void main(void)
     float a = 0.0;
     /* When using multiframe sampling, might not be necessary and even tends to add more blur */
 #ifdef AASTEP
-    if(u_aaSampling == 0) {         // LabelRenderPass.Sampling.None
+    if(u_aaSampling == 0) {         // Sampling.None
 #endif
 
         a = texStep(0.5, v_uv);
 
 #ifdef AASTEP
-    } else if(u_aaSampling == 1) {  // LabelRenderPass.Sampling.Smooth
+    } else if(u_aaSampling == 1) {  // Sampling.Smooth
         a = texSmooth(0.5, v_uv);
-    } else if(u_aaSampling == 2) {  // LabelRenderPass.Sampling.Horizontal3
+    } else if(u_aaSampling == 2) {  // Sampling.Horizontal3
         a = aastep3h(0.5, v_uv);
-    } else if(u_aaSampling == 3) {  // LabelRenderPass.Sampling.Vertical3
+    } else if(u_aaSampling == 3) {  // Sampling.Vertical3
         a = aastep3v(0.5, v_uv);
-    } else if(u_aaSampling == 4) {  // LabelRenderPass.Sampling.Grid3x3
+    } else if(u_aaSampling == 4) {  // Sampling.Grid3x3
         a = aastep3x3(0.5, v_uv);
-    } else if(u_aaSampling == 5) {  // LabelRenderPass.Sampling.Grid4x4
+    } else if(u_aaSampling == 5) {  // Sampling.Grid4x4
         a = aastep4x4(0.5, v_uv);
     }
 #endif

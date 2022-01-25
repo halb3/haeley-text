@@ -8,12 +8,12 @@ import { assert } from 'haeley-auxiliaries';
 import { FontFace } from './fontface';
 import { Glyph } from './glyph';
 import { GlyphVertices } from './glyphvertices';
-import { Label } from './label';
+import { Alignment, Elide, Label, LineAnchor } from './label';
 
 /* spellchecker: enable */
 
 
-type Fragment = [number, number, Typesetter.FragmentType];
+type Fragment = [number, number, FragmentType];
 type Line = [number, number, number];
 
 
@@ -70,25 +70,27 @@ export class Typesetter {
     private static lineAnchorOffset(label: Label): number {
         let offset = 0.0;
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const padding = label.fontFace!.glyphTexturePadding;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const fontFace = label.fontFace!;
         switch (label.lineAnchor) {
-            case Label.LineAnchor.Ascent:
+            case LineAnchor.Ascent:
                 offset = fontFace.ascent - padding[0];
                 break;
-            case Label.LineAnchor.Descent:
+            case LineAnchor.Descent:
                 offset = fontFace.descent * (1.0 + padding[0] / fontFace.ascent);
                 break;
-            case Label.LineAnchor.Center:
+            case LineAnchor.Center:
                 offset = fontFace.ascent - padding[0] - 0.5 * fontFace.size;
                 break;
-            case Label.LineAnchor.Top:
+            case LineAnchor.Top:
                 offset = fontFace.ascent - padding[0] + 0.5 * fontFace.lineGap;
                 break;
-            case Label.LineAnchor.Bottom:
+            case LineAnchor.Bottom:
                 offset = fontFace.ascent - padding[0] + 0.5 * fontFace.lineGap - fontFace.lineHeight;
                 break;
-            case Label.LineAnchor.Baseline:
+            case LineAnchor.Baseline:
             default:
                 offset = - padding[0];
                 break;
@@ -112,6 +114,7 @@ export class Typesetter {
         const advances = new Float32Array(text.length);
         for (let i = 0; i < text.length; ++i) {
             const charCode = text.charCodeAt(i);
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             advances[i] = label.fontFace!.glyph(charCode).advance;
         }
         return advances;
@@ -136,9 +139,11 @@ export class Typesetter {
         }
 
         const kerningAfter = (index: number): number => {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             if (index < 0 || index > text!.length - 1) {
                 return NaN;
             }
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             return label.fontFace!.kerning(text!.charCodeAt(index), text!.charCodeAt(index + 1));
         };
 
@@ -172,15 +177,16 @@ export class Typesetter {
 
             if (currentWordIndex < i) {
                 // Add previous word fragment (indicated by word index below current index).
-                fragments.push([currentWordIndex, i, Typesetter.FragmentType.Word]);
+                fragments.push([currentWordIndex, i, FragmentType.Word]);
             }
-            const type = label.lineFeedAt(i) ? Typesetter.FragmentType.LineFeed : Typesetter.FragmentType.Delimiter;
+            const type = label.lineFeedAt(i) ? FragmentType.LineFeed : FragmentType.Delimiter;
             fragments.push([i, i + 1, type]);
             currentWordIndex = i + 1;
         }
         // Account for last fragment that does not end with delimiter.
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         if (!isDelimiter!) {
-            fragments.push([currentWordIndex, label.length, Typesetter.FragmentType.Word]);
+            fragments.push([currentWordIndex, label.length, FragmentType.Word]);
         }
 
         return fragments;
@@ -213,12 +219,13 @@ export class Typesetter {
      */
     private static elideThresholds(label: Label, ellipsisWidth: number): [number, number] {
         switch (label.elide) {
-            case Label.Elide.Right:
+            case Elide.Right:
                 return [label.lineWidth - ellipsisWidth, 0.0];
-            case Label.Elide.Middle:
+            case Elide.Middle: {
                 const threshold = label.lineWidth / 2 - ellipsisWidth / 2;
                 return [threshold, threshold];
-            case Label.Elide.Left:
+            }
+            case Elide.Left:
                 return [0.0, label.lineWidth - ellipsisWidth];
             default:
                 return [0.0, 0.0];
@@ -254,7 +261,7 @@ export class Typesetter {
 
             const fragment = labelFragments[i0];
 
-            if (fragment[2] === Typesetter.FragmentType.LineFeed) {
+            if (fragment[2] === FragmentType.LineFeed) {
                 continue;
             }
 
@@ -267,7 +274,7 @@ export class Typesetter {
                 continue;
             }
             // If the single delimiter didn't fit or first/last character of word, then break.
-            if (fragment[2] === Typesetter.FragmentType.Delimiter ||
+            if (fragment[2] === FragmentType.Delimiter ||
                 width + labelAdvances[reverse ? fragment[1] - 1 : fragment[0]] > threshold) {
                 break;
             }
@@ -395,14 +402,14 @@ export class Typesetter {
      * @param begin - Vertex index to start alignment at.
      * @param end - Vertex index to stop alignment at.
      */
-    private static transformAlignment(width: number, alignment: Label.Alignment,
+    private static transformAlignment(width: number, alignment: Alignment,
         vertices: GlyphVertices | undefined, begin: number, end: number): void {
-        if (vertices === undefined || alignment === Label.Alignment.Left) {
+        if (vertices === undefined || alignment === Alignment.Left) {
             return;
         }
 
         let offset = -width;
-        if (alignment === Label.Alignment.Center) {
+        if (alignment === Alignment.Center) {
             offset *= 0.5;
         }
 
@@ -461,6 +468,7 @@ export class Typesetter {
         }
 
         assert(label.fontFace !== undefined, `expected a font face for label before typesetting`);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const fontFace = label.fontFace!;
 
         // Retrieve advances, kernings, as well as line feed and delimiter indices.
@@ -484,7 +492,7 @@ export class Typesetter {
         const lines = new Array<Line>();
         let vertexIndex = 0;
 
-        const elide = label.elide !== Label.Elide.None;
+        const elide = label.elide !== Elide.None;
 
 
         // Typeset Lines. A line is a 3-tuple of start-index, end-index, and line width. The indices are referencing
@@ -504,7 +512,7 @@ export class Typesetter {
                 }
 
                 // Elide takes precedence, since full line width is used, so every line break is omitted.
-                const lineFeed = !elide && fragment[2] === Typesetter.FragmentType.LineFeed;
+                const lineFeed = !elide && fragment[2] === FragmentType.LineFeed;
                 let wordWrap = false;
 
                 // If word wrap is desired (no elide, no line feed already and label enabled), then take words with
@@ -517,12 +525,12 @@ export class Typesetter {
                     // Example: 'A wonderful serenity has taken place'. If line breaks is required after 'taken' it will
                     // ignore the subsequent space. For 'A wonderful serenity has    taken place' four spaces will occur
                     // on the next new line: '    place' instead of 'place'.
-                    const depictable = fragment[2] !== Typesetter.FragmentType.Delimiter ||
+                    const depictable = fragment[2] !== FragmentType.Delimiter ||
                         glyphs(fragment[0]).depictable();
 
                     // If this fragment is a word then take next depictable delimiter into account.
-                    const lookAhead = fragment[2] === Typesetter.FragmentType.Word &&
-                        i < fragments.length - 1 && fragments[i + 1][2] === Typesetter.FragmentType.Delimiter;
+                    const lookAhead = fragment[2] === FragmentType.Word &&
+                        i < fragments.length - 1 && fragments[i + 1][2] === FragmentType.Delimiter;
                     const depictableAhead = lookAhead && glyphs(fragments[i + 1][0]).depictable();
 
                     wordWrap = pen[0] + (depictable ? fragmentWidths[i] : 0.0)
@@ -563,12 +571,12 @@ export class Typesetter {
 
             // Compute width of ellipsis (reuse default advances, kernings and fragment widths functions).
             const ellipsisFragments: Array<Fragment> =
-                [[label.length, label.length + label.ellipsis.length, Typesetter.FragmentType.Word]];
+                [[label.length, label.length + label.ellipsis.length, FragmentType.Word]];
 
             const ellipsisAdvances = Typesetter.advances(label, label.ellipsis);
             const ellipsisKernings = Typesetter.kernings(label, label.ellipsis);
             const ellipsisFragmentWidths = Typesetter.fragmentWidths(
-                [[0, label.ellipsis.length, Typesetter.FragmentType.Word]], ellipsisAdvances, ellipsisKernings);
+                [[0, label.ellipsis.length, FragmentType.Word]], ellipsisAdvances, ellipsisKernings);
 
             const ellipsisWidth = ellipsisFragmentWidths[0];
             // If even the ellipsis does not fit within line width, then skip typesetting.
@@ -581,7 +589,7 @@ export class Typesetter {
                 thresholds[0], labelFragments, labelFragmentWidths, labelAdvances, labelKernings, false);
 
             // Pass the unused width (delta to left-side threshold) to the right-side threshold.
-            if (label.elide === Label.Elide.Middle) {
+            if (label.elide === Elide.Middle) {
                 thresholds[1] += thresholds[0] - leftWidth;
             }
 
@@ -617,13 +625,8 @@ export class Typesetter {
 
 }
 
-
-export namespace Typesetter {
-
-    export enum FragmentType {
-        Word = 0,
-        Delimiter = 1,
-        LineFeed = 2,
-    }
-
+export enum FragmentType {
+    Word = 0,
+    Delimiter = 1,
+    LineFeed = 2,
 }

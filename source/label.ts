@@ -30,10 +30,10 @@ export abstract class Label {
     protected _text: Text;
 
     /** @see {@link alignment} */
-    protected _alignment: Label.Alignment = Label.Alignment.Left;
+    protected _alignment: Alignment = Alignment.Left;
 
     /** @see {@link lineAnchor} */
-    protected _lineAnchor: Label.LineAnchor = Label.LineAnchor.Baseline;
+    protected _lineAnchor: LineAnchor = LineAnchor.Baseline;
 
     /** @see {@link lineWidth} */
     protected _lineWidth = NaN;
@@ -42,7 +42,7 @@ export abstract class Label {
     protected _fontSize: number;
 
     /** @see {@link fontSizeUnit} */
-    protected _fontSizeUnit: Label.Unit = Label.Unit.World;
+    protected _fontSizeUnit: Unit = Unit.World;
 
     /** @see {@link fontFace} */
     protected _fontFace: FontFace | undefined;
@@ -54,7 +54,7 @@ export abstract class Label {
     protected _backgroundColor: Color;
 
     /** @see {@link type} */
-    protected _type: Label.Type;
+    protected _type: Type;
 
     /** @see {@link staticTransform} */
     protected _staticTransform: mat4;
@@ -77,7 +77,7 @@ export abstract class Label {
     protected _wrap = false;
 
     /** @see {@link elide} */
-    protected _elide: Label.Elide = Label.Elide.None;
+    protected _elide: Elide = Elide.None;
 
     /** @see {@link ellipsis} */
     protected _ellipsis: string = Label.DEFAULT_ELLIPSIS;
@@ -95,14 +95,14 @@ export abstract class Label {
 
 
     /**
-     * Constructs an unconfigured, empty label. Depending on the label type, transformations are applied
+     * Constructs an unconfigured, empty label. Depending on the Type, transformations are applied
      * once when typesetting (static) or every frame during rendering (dynamic).
      * @param text - The text that is displayed by this label.
      * @param type - Either static or dynamic. If static is used, all transformations are baked and modifications to
      * any of the label's transformations are expected to occur less often.
      * @param fontFace - The font face that should be used for that label, or undefined if set later.
      */
-    constructor(text: Text, type: Label.Type, fontFace?: FontFace) {
+    constructor(text: Text, type: Type, fontFace?: FontFace) {
         this._text = text;
         this._type = type;
 
@@ -172,6 +172,7 @@ export abstract class Label {
         if (index < 1 || index > this.length) {
             return NaN;
         }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._fontFace!.kerning(this.charCodeAt(index - 1), this.charCodeAt(index));
     }
 
@@ -184,6 +185,7 @@ export abstract class Label {
         if (index < 0 || index > this.length - 1) {
             return NaN;
         }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._fontFace!.kerning(this.charCodeAt(index), this.charCodeAt(index + 1));
     }
 
@@ -197,6 +199,7 @@ export abstract class Label {
         if (index < 0 || index > this.length) {
             return NaN;
         }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._fontFace!.glyph(this.charCodeAt(index)).advance;
     }
 
@@ -238,7 +241,7 @@ export abstract class Label {
      * are applied during rendering without requiring re-typesetting or re-computation of vertices. The type,
      * however, does not relate to the text. Whenever the text changes, re-typesetting etc. have to be invoked.
      */
-    get type(): Label.Type {
+    get type(): Type {
         return this._type;
     }
 
@@ -274,10 +277,10 @@ export abstract class Label {
      * right. The ellipsis string can be adjusted (@see {@link ellipsis}). If the labels text does not exceed the line
      * width no elide will be applied.
      */
-    set elide(elide: Label.Elide) {
+    set elide(elide: Elide) {
         this._elide = elide;
     }
-    get elide(): Label.Elide {
+    get elide(): Elide {
         return this._elide;
     }
 
@@ -289,7 +292,7 @@ export abstract class Label {
             return;
         }
         this._ellipsis = ellipsis;
-        if (this._elide !== Label.Elide.None) {
+        if (this._elide !== Elide.None) {
             this._altered.alter('typesetting');
         }
     }
@@ -317,34 +320,35 @@ export abstract class Label {
     get lineWidth(): number {
         /* this.fontSize and lineWidth use the same unit (i.e., this.fontSizeUnit),
          * this._lineWidth is expected to be in the same unit as the fontFace's glyph texture atlas */
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         return this._lineWidth * this._fontFace!.size / this.fontSize;
     }
 
     /**
      * Horizontal text alignment for typesetting.
      */
-    set alignment(alignment: Label.Alignment) {
+    set alignment(alignment: Alignment) {
         if (this._alignment === alignment) {
             return;
         }
         this._alignment = alignment;
         this._altered.alter('typesetting');
     }
-    get alignment(): Label.Alignment {
+    get alignment(): Alignment {
         return this._alignment;
     }
 
     /**
      * Vertical text anchor point used for positional reference.
      */
-    set lineAnchor(anchor: Label.LineAnchor) {
+    set lineAnchor(anchor: LineAnchor) {
         if (this._lineAnchor === anchor) {
             return;
         }
         this._lineAnchor = anchor;
         this._altered.alter('typesetting');
     }
-    get lineAnchor(): Label.LineAnchor {
+    get lineAnchor(): LineAnchor {
         return this._lineAnchor;
     }
 
@@ -368,14 +372,14 @@ export abstract class Label {
      * This unit is used for the font size.
      * (@see {@link fontSize})
      */
-    set fontSizeUnit(unit: Label.Unit) {
+    set fontSizeUnit(unit: Unit) {
         if (this._fontSizeUnit === unit) {
             return;
         }
         this._fontSizeUnit = unit;
         this._altered.alter('typesetting');
     }
-    get fontSizeUnit(): Label.Unit {
+    get fontSizeUnit(): Unit {
         return this._fontSizeUnit;
     }
 
@@ -439,6 +443,7 @@ export abstract class Label {
     }
     get staticTransform(): mat4 {
 
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const s = this.fontSize / this._fontFace!.size;
 
         const t: mat4 = mat4.create();
@@ -492,47 +497,43 @@ export abstract class Label {
 
 }
 
-export namespace Label {
+export enum Type {
+    Static = 'static',
+    Dynamic = 'dynamic',
+}
 
-    export enum Type {
-        Static = 'static',
-        Dynamic = 'dynamic',
-    }
+export enum Elide {
+    None = 'none',
+    Left = 'left',
+    Middle = 'middle',
+    Right = 'right',
+}
 
-    export enum Elide {
-        None = 'none',
-        Left = 'left',
-        Middle = 'middle',
-        Right = 'right',
-    }
+export enum Alignment {
+    Left = 'left',
+    Center = 'center',
+    Right = 'right',
+}
 
-    export enum Alignment {
-        Left = 'left',
-        Center = 'center',
-        Right = 'right',
-    }
+export enum LineAnchor {
+    Top = 'top',
+    Ascent = 'ascent',
+    Center = 'center',
+    Baseline = 'baseline',
+    Descent = 'descent',
+    Bottom = 'bottom',
+}
 
-    export enum LineAnchor {
-        Top = 'top',
-        Ascent = 'ascent',
-        Center = 'center',
-        Baseline = 'baseline',
-        Descent = 'descent',
-        Bottom = 'bottom',
-    }
-
-    /**
-     * This unit is used for the font size and related calculations.
-     */
-    export enum Unit {
-        /* abstract world unit */
-        World = 'world',
-        /* screen pixel */
-        Pixel = 'pixel',
-        /* mixed: world unit for positioning, px unit for font size*/
-        Mixed = 'mixed',
-        /** @todo Pt for point unit */
-        /* Point = 'point', */
-    }
-
+/**
+ * This unit is used for the font size and related calculations.
+ */
+export enum Unit {
+    /* abstract world unit */
+    World = 'world',
+    /* screen pixel */
+    Pixel = 'pixel',
+    /* mixed: world unit for positioning, px unit for font size*/
+    Mixed = 'mixed',
+    /** @todo Pt for point unit */
+    /* Point = 'point', */
 }
