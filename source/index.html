@@ -56,9 +56,11 @@
     // window['rxjs'] = rxjs;
 
     import * as auxiliaries from 'haeley-auxiliaries';
+    import * as colors from 'haeley-math';
     import * as math from 'haeley-math';
-    import * as webglText from './index.ts';
-    window['haeley'] = { auxiliaries, math, webglText };
+    import * as webgl from 'haeley-webgl';
+    import * as text from './index.ts';
+    window['haeley'] = { auxiliaries, colors, math, webgl: { ...webgl, text } };
 
 </script>
 
@@ -70,12 +72,12 @@
     window.onload = () => {
 
         document.title = __LIB_NAME__;
-        document.querySelector('#version').innerHTML = haeley.webglText.version();
-        document.querySelector('#branch').innerHTML = haeley.webglText.branch();
-        document.querySelector('#commit').innerHTML = haeley.webglText.commit();
+        document.querySelector('#version').innerHTML = haeley.webgl.text.version();
+        document.querySelector('#branch').innerHTML = haeley.webgl.text.branch();
+        document.querySelector('#commit').innerHTML = haeley.webgl.text.commit();
         document.querySelector('#cryear').innerHTML = new Date().getFullYear();
 
-        console.log("'haeley-webglText' imported:", haeley);
+        console.log("'haeley-webgl-text' imported:", haeley);
 
         return true;
     };

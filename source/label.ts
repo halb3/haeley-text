@@ -1,11 +1,11 @@
 
 /* spellchecker: disable */
 
-import { mat4, vec3 } from 'gl-matrix';
+import { mat4, vec3, GLclampf4 } from 'haeley-math';
 
-import { ChangeLookup } from '../changelookup';
-import { Color } from '../color';
-import { GLclampf4 } from '../tuples';
+import { Color } from 'haeley-colors';
+
+import { ChangeLookup } from 'haeley-webgl';
 
 import { FontFace } from './fontface';
 import { GlyphVertices } from './glyphvertices';

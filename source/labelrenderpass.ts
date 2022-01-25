@@ -1,22 +1,24 @@
 
 /* spellchecker: disable */
 
-import { mat4 } from 'gl-matrix';
+import { Camera, GLfloat2, GLsizei2, mat4 } from 'haeley-math';
 
-import { assert } from '../auxiliaries';
-import { GLfloat2, GLsizei2 } from '../tuples';
+import { Color } from 'haeley-colors';
 
-import { Camera } from '../camera';
-import { ChangeLookup } from '../changelookup';
-import { Context } from '../context';
-import { Framebuffer } from '../framebuffer';
-import { Initializable } from '../initializable';
-import { Program } from '../program';
-import { Shader } from '../shader';
-import { Texture2D } from '../texture2d';
+import { assert } from 'haeley-auxiliaries';
+
+import {
+  ChangeLookup,
+  Context,
+  Framebuffer,
+  Initializable,
+  Program,
+  Shader,
+  Texture2D,
+} from "haeley-webgl";
+
 import { GlyphVertices } from './glyphvertices';
 
-import { Color } from '../color';
 import { FontFace } from './fontface';
 import { Label } from './label';
 import { LabelGeometry } from './labelgeometry';

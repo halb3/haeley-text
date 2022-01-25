@@ -1,8 +1,9 @@
 
 /* spellchecker: disable */
 
-import { assert, dirname, log, logIf, LogLevel } from '../auxiliaries';
-import { GLfloat2, GLfloat4 } from '../tuples';
+import { assert, dirname, log, logIf, LogLevel } from 'haeley-auxiliaries';
+
+import { GLfloat2, GLfloat4 } from 'haeley-math';
 
 import { FontFace } from './fontface';
 import { Glyph } from './glyph';

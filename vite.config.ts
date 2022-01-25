@@ -25,13 +25,17 @@ export default defineConfig(({ mode }) => {
                 external: [
                     'rxjs',
                     'haeley-auxiliaries',
-                    'haeley-math'
+                    'haeley-colors',
+                    'haeley-math',
+                    'haeley-webgl'
                 ],
                 output: {
                     globals: {
                         'rxjs': 'rxjs',
                         'haeley-auxiliaries': 'haeley.auxiliaries',
-                        'haeley-math': 'haeley.math'
+                        'haeley-colors': 'haeley.colors',
+                        'haeley-math': 'haeley.math',
+                        'haeley-webgl': 'haeley.webgl'
                     }
                 }
             }

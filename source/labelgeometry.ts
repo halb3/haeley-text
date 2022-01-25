@@ -1,12 +1,9 @@
 
 /* spellchecker: disable */
 
-import { assert } from '../auxiliaries';
+import { assert } from 'haeley-auxiliaries';
 
-import { Buffer } from '../buffer';
-import { Context } from '../context';
-import { Geometry } from '../geometry';
-import { Initializable } from '../initializable';
+import { Buffer, Context, Geometry, Initializable } from 'haeley-webgl';
 
 /* spellchecker: enable */
 

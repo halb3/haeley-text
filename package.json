@@ -59,7 +59,9 @@
     },
     "dependencies": {
         "haeley-auxiliaries": "^0.3.2",
+        "haeley-colors": "^0.2.1",
         "haeley-math": "^0.2.1",
+        "haeley-webgl": "file:../haeley-webgl",
         "rxjs": "^7.5.1"
     },
     "scripts": {

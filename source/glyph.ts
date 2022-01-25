@@ -1,7 +1,7 @@
 
 /* spellchecker: disable */
 
-import { clampf2, GLclampf2, GLfloat2 } from '../tuples';
+import { clampf2, GLclampf2, GLfloat2 } from 'haeley-math'
 
 /* spellchecker: enable */
 

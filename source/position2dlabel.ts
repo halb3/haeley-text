@@ -1,11 +1,9 @@
 
 /* spellchecker: disable */
 
-import { mat4, vec2, vec3, vec4 } from 'gl-matrix';
+import { mat4, vec2, vec3, vec4, m4, v2, GLfloat2 } from 'haeley-math';
 
-import { logIf, LogLevel } from '../auxiliaries';
-import { m4, v2 } from '../gl-matrix-extensions';
-import { GLfloat2 } from '../tuples';
+import { logIf, LogLevel } from 'haeley-auxiliaries';
 
 import { FontFace } from './fontface';
 import { GlyphVertices } from './glyphvertices';

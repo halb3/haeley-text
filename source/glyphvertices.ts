@@ -1,7 +1,7 @@
 
 /* spellchecker: disable */
 
-import { vec2, vec3 } from 'gl-matrix';
+import { vec2, vec3 } from 'haeley-math';
 
 /* spellchecker: enable */
 

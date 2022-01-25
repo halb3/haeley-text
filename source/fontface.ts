@@ -1,14 +1,12 @@
 
 /* spellchecker: disable */
 
-import { assert } from '../auxiliaries';
-import { GLfloat2, GLfloat4, GLsizei2 } from '../tuples';
+import { assert, fetchAsync } from 'haeley-auxiliaries';
 
-import { Context } from '../context';
-import { Texture2D } from '../texture2d';
-import { Wizard } from '../wizard';
+import { GLfloat2, GLfloat4, GLsizei2 } from 'haeley-math';
 
-import { fetchAsync } from '../fetch';
+import { Context, Texture2D, Wizard } from 'haeley-webgl';
+
 import { FontFaceLoader } from './fontfaceloader';
 import { Glyph } from './glyph';
 
